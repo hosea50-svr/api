@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
+<div class="container bg-light p-4">
     <div>
     <div class="text-center">
-        <img src="{{ post.image.url }}" height="500" width="500"class="text-center">
+        <img src="{{ post.image.url }}" height="500" width="100%"class="text-center">
          <h1>{{ post.title }}</h1>
     </div>
        
         <p>{{ post.content|linebreaks }}</p>
-        <p>{{ post.created_at }}</p>
-      
-      </div>
+        <p class="text-warning">{{ post.created_at }}</p>
+          </div>
+          <a href="{% url "test" %}" class="btn btn-secondary">
+            Back
+         </a>
 </div>
       
-{% endblock content %}
+{% endblock content %}  
