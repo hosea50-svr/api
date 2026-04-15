@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div>
+    <div class="text-center">
+        <img src="{{ post.image.url }}" height="500" width="500"class="text-center">
+         <h1>{{ post.title }}</h1>
+    </div>
+       
+        <p>{{ post.content|linebreaks }}</p>
+        <p>{{ post.created_at }}</p>
+      
+      </div>
+</div>
+      
+{% endblock content %}

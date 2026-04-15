@@ -25,6 +25,5 @@ def king(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', king)
     path('', include('kingart.urls'))
 ]
