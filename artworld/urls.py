@@ -16,14 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from django.http import HttpResponse
 
-
-def king(request):
-    return HttpResponse('king of bois welcome you')
-    
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('kingart.urls'))
+    path('', include('kingart.urls')),
+    path("api-auth/", include("rest_framework.urls"))
 ]
