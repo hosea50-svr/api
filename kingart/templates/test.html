@@ -1,25 +1,46 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-        <div class="container">
-            <h1 class="text-center text-warning">TEST</h1>
 
-        <div class="row">
-            {% for blog in blogs %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-top">
-                            <img src="{{ blog.image.url}}" height="250px" width="355px">
-                        </div>
-                        <div class="card-text">
-                            <h5 class="text-center">{{ blog.title }}</h5>
-                            <p class="text-center">{{ blog.preview }}</p>
-                        </div>
-                        <div class="card-text d-flex justify-content-center p-3">
-                            <a href="{% url 'read' blog.id %}" class="btn btn-warning ps-2 pe-2 text-white">Read more</a>
+        <div class="container bg-warning p-2">
+            <div class="header bg-dark p-4 mb-2">
+                <div class="text-end">
+                    <a class="text-white" href="{% url "login" %}">Login</a>
+                </div>
+                <h3 class="text-white">Blogs</h3>
+                <h1 class="text-center text-warning">Journey to web development</h1>
+                <a href="{% url 'post' %}" class="btn bg-primary text-white mw-100">
+                    Add new blog+
+                </a><br><br>
+                </div>
+                 <div class="row">
+                    {% for blog in blog %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 ">
+                            <div class="card-top">
+                                {% if blog.image %}
+                                    <img src="{{ blog.image.url }}" height="250px" width="100%" style="object-fit:cover;">
+                                {% endif %}
+                            </div>
+                            <div class="card-text">
+                                <h5 class="text-center">{{ blog.title }}</h5>
+                                <p class="text-center">{{ blog.preview }}</p>
+                            </div>
+                            <div class="card-text p-3">
+                                <a href="{% url 'read' blog.id %}" class="btn btn-outline btn-warning w-100 text-white">
+                                    Read more
+                                </a><br>
+                                <br><a href="{% url 'update' blog.id %}" type="submit" class="btn btn-success ps-1 pe-1 text-white">
+                                    Update
+                                </a>
+                                
+                                <a class="btn btn-danger ps-1 pe-1 text-white" href="{% url 'blog_delete' blog.id %}">
+                                    Delete
+                                </a>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
         </div>
 {% endblock content %}

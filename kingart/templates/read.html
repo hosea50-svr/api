@@ -1,18 +1,145 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container bg-light p-4">
-    <div>
-    <div class="text-center">
-        <img src="{{ post.image.url }}" height="500" width="100%"class="text-center">
-         <h1>{{ post.title }}</h1>
-    </div>
-       
-        <p>{{ post.content|linebreaks }}</p>
-        <p class="text-warning">{{ post.created_at }}</p>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+
+  <div class="container bg-warning pt-2 pb-2">
+      <div class="container bg-light p-4">
+
+          <div class="text-center">
+              <h1>{{ post.title }}</h1>
+              <img src="{{ post.image.url }}" height="600" width="100%"class="object-fit-contain text-center">
+              <strong class="text-warning">{{ post.title }}</strong>
           </div>
-          <a href="{% url "test" %}" class="btn btn-secondary">
-            Back
-         </a>
-</div>
+            
+              <p>{{ post.content|linebreaks }}</p>
+
+                  <div class="container mt-5 text-center">
+                      <h4 class="text-success">Rate post</h4>
+                      <button id="likeBtn" class="btn btn-outline-danger" >
+                        <i id="heartIcon" class="bi bi-star"></i><span id="max"></span> Rate <span id="likeTotal">0</span>
+                      </button>
+
+                      <button
+                      class="btn btn-outline btn-secondary"
+                      onclick="increaseCount()"
+                      ondblclick="resetCounter()"
+                      id = "counterBtn"
+                      >
+                      <i id="heartIcon" class="bi bi-heart"></i> Like</button>
+
+                      <button 
+                      onclick="subscribe()" 
+                      class="my-js-btn btn btn-dark raduis-4 rounded-5"
+                      >Subscribe</button> 
+                </div>
+              <div class="d-flex justify-content-between">
+                  <div>
+                      <p class="text-warning">{{ post.created_at }}</p>
+                        <a href="{% url "test" %}" class="btn btn-secondary">
+                          Back
+                        </a>
+                        <a href="{% url "update" post.id %}" class="btn btn-warning">
+                          Update
+                      </a>
+                  </div>
+                  <div>
+                    <div class="card p-3 bg-warning">
+                        <span>
+                          Total Like: <span class="js-like-total">0</span> 
+                      </span>
+                        <span>
+                          Total Subscribers: <span class="js-sub-total">0</span> 
+                        </span>
+                        <span>
+                          Total Rate:  <span class="js-rate-total">0</span>
+                      </span>
+                    </div>
+                    
+                  </div>
+            </div>
+      </div>
+  </div>
+
+<script>
+
+const button = document.getElementById("counterBtn");
+
+function increaseCount(){
+    button.textContent='Liked'
+    button.innerHTML='<i class="bi bi-heart"></i> liked'
+    button.style.color='#fff'
+    button.style.backgroundColor='red'
+    counterBtn.classList.toggle("btn-outline-danger");
+    counterBtn.classList.toggle("btn-danger");
+
+    total_sub = 1;
+    like = document.querySelector('.js-like-total');
+    like.innerText = total_sub
+  }
+
+function resetCounter(){
+    button.innerHTML='<i class="bi bi-heart"></i> unlike'
+    button.style.color='white'
+    button.style.backgroundColor='gray'
+
+    total_sub = 0;
+    like = document.querySelector('.js-like-total');
+    like.innerText = total_sub
+}
+
+
+  const likeBtn = document.getElementById("likeBtn");
+  const heartIcon = document.getElementById("heartIcon");
+  let likeTotal = document.getElementById("likeTotal")
+  count=1
+  maxLimit=4
+    
+  likeBtn.addEventListener("click", function () {
+    heartIcon.classList.toggle("bi-heart");
+    heartIcon.classList.toggle("bi-heart-fill");
+    if (count < maxLimit){
+        likeTotal.textContent=count++;
+        like = document.querySelector('.js-rate-total');
+        like.innerText = (count-1)
+    }
+    if(count === maxLimit){
+      document.getElementById('max').textContent=' Max-rate:'
+      likeBtn.disabled=true;
+      
+    }
+    likeBtn.classList.toggle("btn-outline-danger");
+    likeBtn.classList.toggle("btn-danger");
+
+  });
+
+
+  let total_sub = 0;
+  function subscribe(){
+    const sub_btn = document.querySelector(".my-js-btn");
+    sub_btn.innerText="Subscribed";
+    sub_btn.style.backgroundColor="green";
+    sub_btn.classList.add("bounce");
+    total_sub = 1
+    const sub_total= document.querySelector('.js-sub-total');
+    sub_total.innerText=total_sub
+
+    setTimeout(()=>{
+      sub_btn.classList.remove("bounce");
+    },3000)
+  }
+  const db_sub = document.querySelector(".my-js-btn");
+  db_sub.addEventListener("dblclick", function(){
+      db_sub.innerText="subscribe"
+      db_sub.style.backgroundColor="black"
+      total_sub = 0;
+      const sub_total= document.querySelector('.js-sub-total');
+      sub_total.innerText=total_sub
+  })
+  
+</script>
       
 {% endblock content %}  

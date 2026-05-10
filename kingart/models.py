@@ -1,14 +1,36 @@
 from django.db import models
+from django.contrib.auth.models import User 
 
-# Create your models here.
 class Blog(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="blogs",
+        null=True,    
+         blank=True,
+    ) 
+
     title = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField(upload_to="media/")
+    image = models.ImageField(upload_to="blog_images/", blank=True, null=True,default="blog_images/default.jpg")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+
     def preview(self):
-        return(self.content[:70]) + "..."
+        return (self.content[:70]) + "..."
+
+
+# Create your models here.
+# class Blog(models.Model):
+#     title = models.CharField(max_length=255)
+#     content = models.TextField()
+#     image = models.ImageField(upload_to="media/")
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.title
+#     def preview(self):
+#         return(self.content[:70]) + "..."
     
