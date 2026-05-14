@@ -2,6 +2,7 @@ from django.urls import path, include
 from . import views 
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import contact_view
 
 
 urlpatterns = [
@@ -17,6 +18,9 @@ urlpatterns = [
     path('api/login/', views.LoginView.as_view(), name='login'),
     path('class/blogs/', views.BlogListCreateAPIView.as_view(), name="api-blog"),
     path('class/blogs/<int:id>/', views.BlogDetailAPIView.as_view(), name="api-blog-id"),
+
+    path("api/contact/", contact_view),
+
 
     #API Urls (Functional views)
     # path('api/blog/', views.blog_list_create_api),

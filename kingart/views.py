@@ -21,6 +21,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+
+
 class RegisterView(APIView):
     permission_classes = []
 
@@ -236,6 +243,38 @@ class BlogDetailAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@csrf_exempt
+def contact_view(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        name = data.get("name")
+        email = data.get("email")
+        message = data.get("message")
+
+        subject = f"New Contact Message from {name}"
+        full_message = f"""
+        Name: {name}
+        Email: {email}
+
+        Message:
+        {message}
+        """
+
+        send_mail(
+            subject,
+            full_message,
+            email,
+            ["yourgmail@gmail.com"],
+            fail_silently=False,
+        )
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
 # class BlogDetailAPIView(APIView):
 #     authentication_classes = [TokenAuthentication]
 #     permission_classes = [IsAuthenticated]
@@ -296,15 +335,15 @@ class BlogDetailAPIView(APIView):
         # print("HEADERS AUTH:", request.headers.get("Authorization"))
         # print("BLOG USER ID:", blog.user_id)
 
-        if blog.user_id != request.user.id:
-            return Response({"error": "Not allowed"}, status=403)
+        # if blog.user_id != request.user.id:
+        #     return Response({"error": "Not allowed"}, status=403)
 
-        blog.delete()
+        # blog.delete()
 
-        return Response(
-            {"message": "Blog deleted successfully"},
-            status=status.HTTP_204_NO_CONTENT
-        )
+        # return Response(
+        #     {"message": "Blog deleted successfully"},
+        #     status=status.HTTP_204_NO_CONTENT
+        # )
 
 
 

@@ -22,15 +22,16 @@ class Blog(models.Model):
         return (self.content[:70]) + "..."
 
 
-# Create your models here.
-# class Blog(models.Model):
-#     title = models.CharField(max_length=255)
-#     content = models.TextField()
-#     image = models.ImageField(upload_to="media/")
-#     created_at = models.DateTimeField(auto_now_add=True)
+class Comment(models.Model):
+    blog = models.ForeignKey(
+        Blog,
+        on_delete=models.CASCADE,
+        related_name="comments"
+    )
+    name = models.CharField(max_length=100)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return self.title
-#     def preview(self):
-#         return(self.content[:70]) + "..."
+    def __str__(self):
+        return f"Comment by {self.name}"
     
