@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404,redirect
-from . models import Blog
+from . models import Blog,Like
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import serializers
@@ -25,6 +25,16 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+
+from rest_framework import generics
+from .models import Comment
+from .serializers import CommentSerializer
+
+#email
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -147,7 +157,7 @@ class BlogListCreateAPIView(APIView):
 
     def get(self, request):
         blogs = Blog.objects.all()
-        serializer = BlogSerilizer(blogs, many=True)
+        serializer = BlogSerilizer(blogs, many=True,context={"request": request})
         return Response(serializer.data)
 
     def post(self, request):
@@ -184,7 +194,7 @@ class BlogDetailAPIView(APIView):
         if blog is None:
             return Response({"message": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = BlogSerilizer(blog)
+        serializer = BlogSerilizer(blog,context={"request": request})
         return Response(serializer.data)
 
     # FULL UPDATE
@@ -272,6 +282,80 @@ def contact_view(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+#comment views
+class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Comment.objects.filter(
+            blog_id=self.kwargs["blog_id"]
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(
+            blog_id=self.kwargs["blog_id"]
+        )
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def contact(request):
+    name = request.data.get("name")
+    email = request.data.get("email")
+    message = request.data.get("message")
+
+    full_message = f"""
+    Name: {name}
+    Email: {email}
+
+    Message:
+    {message}
+    """
+
+    send_mail(
+        subject=f"New Contact Message from {name}",
+        message=full_message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=["yourgmail@gmail.com"],
+        fail_silently=False,
+    )
+
+    return Response({"message": "Email sent successfully"})
+
+
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        blog = Blog.objects.get(id=post_id)
+
+        like, created = Like.objects.get_or_create(
+            user=request.user,
+            blog=blog
+        )
+
+        likes_count = Like.objects.filter(blog=blog).count()
+
+        if not created:
+            return Response(
+                {
+                    "message": "Already liked",
+                    "likes_count": likes_count
+                },
+                status=400
+            )
+
+        return Response(
+            {
+                "message": "Post liked successfully",
+                "likes_count": likes_count
+            },
+            status=201
+        )
+
 
 
 

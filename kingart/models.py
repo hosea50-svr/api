@@ -14,6 +14,8 @@ class Blog(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to="blog_images/", blank=True, null=True,default="blog_images/default.jpg")
     created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.title
@@ -35,3 +37,9 @@ class Comment(models.Model):
     def __str__(self):
         return f"Comment by {self.name}"
     
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'blog')

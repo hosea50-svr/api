@@ -21,6 +21,17 @@ urlpatterns = [
 
     path("api/contact/", contact_view),
 
+    #Comment api
+     path(
+        "posts/<int:blog_id>/comments/",
+        views.CommentListCreateView.as_view(),
+        name="comments"
+    ),
+    #email
+    path("contact/", views.contact, name="contact"),
+
+    #like section
+    path('posts/<int:post_id>/like/', views.LikePostView.as_view()),
 
     #API Urls (Functional views)
     # path('api/blog/', views.blog_list_create_api),
