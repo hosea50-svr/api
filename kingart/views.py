@@ -5,35 +5,24 @@ from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.decorators import api_view
 from . serializers import BlogSerilizer
 from . forms import BlogForm 
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-
 from django.core.mail import send_mail
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-
 from rest_framework import generics
 from .models import Comment
 from .serializers import CommentSerializer
-
-#email
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.core.mail import send_mail
+from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 
 
@@ -87,18 +76,10 @@ class LoginView(APIView):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-
-
-
 def test(request):
     blog = Blog.objects.all()
     return render(request, 'test.html', {'blog':blog})
-    
-    #PYTHON API
-    # return JsonResponse('hello', safe=False)
-    # blog = Blog.objects.all().values('id','title','content')
-    # print(blog)
-    #return JsonResponse(list(blog), safe=False)
+
 
 def read(request,id):
     post = get_object_or_404(Blog, id=id)
@@ -146,7 +127,6 @@ def login(request):
     
 
 # Class Bass API
-
 class BlogListCreateAPIView(APIView):
     
     parser_classes = [MultiPartParser, FormParser]
@@ -253,37 +233,6 @@ class BlogDetailAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@csrf_exempt
-def contact_view(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-
-        name = data.get("name")
-        email = data.get("email")
-        message = data.get("message")
-
-        subject = f"New Contact Message from {name}"
-        full_message = f"""
-        Name: {name}
-        Email: {email}
-
-        Message:
-        {message}
-        """
-
-        send_mail(
-            subject,
-            full_message,
-            email,
-            ["yourgmail@gmail.com"],
-            fail_silently=False,
-        )
-
-        return JsonResponse({"success": True})
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
-
 #comment views
 class CommentListCreateView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
@@ -332,186 +281,29 @@ class LikePostView(APIView):
     def post(self, request, post_id):
         blog = Blog.objects.get(id=post_id)
 
-        like, created = Like.objects.get_or_create(
+        like = Like.objects.filter(
+            user=request.user,
+            blog=blog
+        ).first()
+
+        if like:
+            like.delete()
+
+            return Response({
+                "message": "Post unliked",
+                "liked": False,
+                "likes_count": Like.objects.filter(blog=blog).count()
+            })
+
+        Like.objects.create(
             user=request.user,
             blog=blog
         )
 
-        likes_count = Like.objects.filter(blog=blog).count()
-
-        if not created:
-            return Response(
-                {
-                    "message": "Already liked",
-                    "likes_count": likes_count
-                },
-                status=400
-            )
-
-        return Response(
-            {
-                "message": "Post liked successfully",
-                "likes_count": likes_count
-            },
-            status=201
-        )
+        return Response({
+            "message": "Post liked",
+            "liked": True,
+            "likes_count": Like.objects.filter(blog=blog).count()
+        })
 
 
-
-
-# class BlogDetailAPIView(APIView):
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     queryset = Blog.objects.all()
-#     serializer_class = BlogSerilizer
-#     lookup_field = "id"   
-#     def get_object(self, id):
-#         try:
-#             return Blog.objects.get(id=id)
-#         except Blog.DoesNotExist:
-#             return None
-
-#     def get(self, request, id):
-#         blog = self.get_object(id)
-#         if blog is None:
-#             return Response({"message": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#         serializer = BlogSerilizer(blog)
-#         return Response(serializer.data)
-
-#     def put(self, request, id):
-#         blog = self.get_object(id)
-
-#         if blog is None:
-#             return Response(
-#                 {"message": "Blog not found"},
-#                 status=status.HTTP_404_NOT_FOUND
-#             )
-
-#         if blog.user_id != request.user.id:
-#             return Response({"error": "Not allowed"}, status=403)
-
-#         serializer = BlogSerilizer(blog, data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-
-#         return Response(
-#             {"errors": serializer.errors},
-#             status=status.HTTP_400_BAD_REQUEST
-#         )
-
-#     def delete(self, request, id):
-#         blog = self.get_object(id)
-
-#         if blog is None:
-#             return Response(
-#                 {"message": "Post not found"},
-#                 status=status.HTTP_404_NOT_FOUND,
-#             )
-
-        
-        # print("USER OBJECT:", request.user)
-        # print("USER ID:", getattr(request.user, "id", None))
-        # print("IS AUTHENTICATED:", request.user.is_authenticated)
-        # print("AUTH:", request.auth)
-        # print("HEADERS AUTH:", request.headers.get("Authorization"))
-        # print("BLOG USER ID:", blog.user_id)
-
-        # if blog.user_id != request.user.id:
-        #     return Response({"error": "Not allowed"}, status=403)
-
-        # blog.delete()
-
-        # return Response(
-        #     {"message": "Blog deleted successfully"},
-        #     status=status.HTTP_204_NO_CONTENT
-        # )
-
-
-
-
-#Function API Set-up CRUD
-
-# @api_view(['GET', 'POST'])
-# @permission_classes([AllowAny]) 
-# def blog_list_create_api(request):
-
-#     if request.method == 'GET':
-#         posts = Blog.objects.all()
-#         serializer = BlogSerilizer(posts, many=True)
-#         return Response(serializer.data)
-
-#     if request.method == 'POST':
-#         serializer = BlogSerilizer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-    
-
-
-# @api_view(['GET', 'PUT','PATCH', 'DELETE'])
-# @permission_classes([AllowAny]) 
-# def blog_detail_api(request, id):
-
-#     try:
-#         post = Blog.objects.get(id=id)
-#     except Blog.DoesNotExist:
-#         return Response({'error': 'Post not found'})
-
-#     if request.method == 'GET':
-#         serializer = BlogSerilizer(post)
-#         return Response(serializer.data)
-
-#     if request.method == 'PUT':
-#         serializer = BlogSerilizer(post, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-    
-#     if request.method == 'PATCH':
-#         serializer = BlogSerilizer(post, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors)
-
-#     if request.method == 'DELETE':
-#         post.delete()
-#         return Response({'message': 'Deleted successfully'})
-
-# Basic API (Single set Up)
-# @permission_classes([AllowAny]) 
-# def blog_get_api(request):
-#     post = Blog.objects.all()
-#     serializer = BlogSerilizer(post, many=True)
-#     return Response(serializer.data)
-
-
-# @api_view(['POST'])
-# @permission_classes([AllowAny]) 
-# def blog_post_api(request):
-#     serializer = BlogSerilizer(data=request.data)
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data)
-    
-# @api_view(['PUT'])
-# @permission_classes([AllowAny]) 
-# def blog_put_api(request,pk):
-#     post = Blog.objects.get(request,pk)
-#     serializer = BlogSerilizer(post,data=request.data)
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data,{'message':'working'})
-
-# @api_view(['DELETE'])
-# @permission_classes([AllowAny]) 
-# def blog_delete_api(request,id):
-#     post = Blog.objects.get(id=id)
-#     post.delete()
-#     return Response({"message": "Deleted successfully"})
-    
