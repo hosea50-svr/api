@@ -10,7 +10,6 @@ idna==3.12
 Markdown==3.10.2
 packaging==26.2
 pillow==12.1.0
-pygame==2.6.1
 requests==2.33.1
 sqlparse==0.5.5
 tzdata==2025.3
