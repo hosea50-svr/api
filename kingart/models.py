@@ -12,7 +12,7 @@ class Blog(models.Model):
 
     title = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField(upload_to="blog_images/", blank=True, null=True,default="blog_images/default.jpg")
+    image = models.ImageField( blank=True, null=True,default="blog_images/default.jpg")
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ['-created_at']

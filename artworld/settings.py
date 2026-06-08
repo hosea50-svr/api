@@ -20,7 +20,6 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": "E-oTVUNB8JujN9bPsDIpKK-NuU8",
 }
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
