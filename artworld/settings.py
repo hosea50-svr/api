@@ -11,6 +11,17 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import cloudinary
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "dsjovmbdj",
+    "API_KEY": "812389762753658",
+    "API_SECRET": "E-oTVUNB8JujN9bPsDIpKK-NuU8",
+}
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,6 +47,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "corsheaders",
+    "cloudinary",
+    "cloudinary_storage",
 ]
 
 
@@ -131,8 +144,10 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 
