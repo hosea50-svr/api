@@ -14,11 +14,13 @@ from pathlib import Path
 import os
 import cloudinary
 
-CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "dsjovmbdj",
-    "API_KEY": "812389762753658",
-    "API_SECRET": "E-oTVUNB8JujN9bPsDIpKK-NuU8",
-}
+import os
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+)
 
 
 
