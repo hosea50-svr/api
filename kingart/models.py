@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User 
+from cloudinary.models import CloudinaryField
+
 
 class Blog(models.Model):
     user = models.ForeignKey(
@@ -12,7 +14,7 @@ class Blog(models.Model):
 
     title = models.CharField(max_length=255)
     content = models.TextField()
-    image = models.ImageField( blank=True, null=True,default="blog_images/default.jpg")
+    image = CloudinaryField('image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ['-created_at']
