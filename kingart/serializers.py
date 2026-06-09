@@ -34,10 +34,12 @@ class BlogSerilizer(serializers.ModelSerializer):
         return False
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        request = self.context.get("request")
 
-        if instance.image and request:
-            data["image"] = request.build_absolute_uri(instance.image.url)
+        try:
+            if instance.image:
+                data["image"] = instance.image.url
+        except Exception:
+            data["image"] = None
 
         return data
 
