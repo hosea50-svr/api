@@ -24,7 +24,8 @@ cloudinary.config(
 
 
 
-print("CLOUD NAME:", os.getenv("CLOUDINARY_CLOUD_NAME"))
+
+print("ENV CHECK:", dict(os.environ))
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
