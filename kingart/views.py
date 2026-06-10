@@ -161,7 +161,7 @@ class BlogListCreateAPIView(APIView):
 
 class BlogDetailAPIView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_object(self, id):
         try:
