@@ -11,7 +11,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class BlogSerilizer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
-    image = serializers.ImageField()
     is_liked = serializers.SerializerMethodField()
 
     class Meta:
