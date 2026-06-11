@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 import cloudinary
-
-import os
+import dj_database_url
 
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
@@ -108,14 +107,23 @@ WSGI_APPLICATION = 'artworld.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
 
 
+# url internal    postgresql://blog_db_k587_user:LztXptNXEo9vZuUi6u8EenYaEhseyM6H@dpg-d8lj443tqb8s738o4a9g-a/blog_db_k587
+
+# eternal        postgresql://blog_db_k587_user:LztXptNXEo9vZuUi6u8EenYaEhseyM6H@dpg-d8lj443tqb8s738o4a9g-a.oregon-postgres.render.com/blog_db_k587
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
