@@ -27,6 +27,20 @@ from django.conf import settings
 
 
 
+from django.http import JsonResponse
+import traceback
+
+def get(self, request):
+    try:
+        blogs = Blog.objects.all()
+        serializer = BlogSerializer(blogs, many=True)
+        return Response(serializer.data)
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 class RegisterView(APIView):
     permission_classes = []
 
