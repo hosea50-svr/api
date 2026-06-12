@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework.authentication import TokenAuthentication
@@ -175,7 +175,7 @@ class BlogListCreateAPIView(APIView):
 
 class BlogDetailAPIView(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_object(self, id):
         try:
@@ -196,7 +196,7 @@ class BlogDetailAPIView(APIView):
         blog = self.get_object(id)
 
         if blog is None:
-            return Response({"message": "Blog not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Blog not found"}, status=404)
 
         if blog.user_id != request.user.id:
             return Response({"error": "Not allowed"}, status=403)
@@ -207,7 +207,7 @@ class BlogDetailAPIView(APIView):
             serializer.save()
             return Response(serializer.data)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=400)
 
     # PARTIAL UPDATE (NEW)
     def patch(self, request, id):

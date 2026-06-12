@@ -12,19 +12,19 @@
           <div class="text-center">
               <h1>{{ post.title }}</h1>
               <img src="{{ post.image.url }}" height="600" width="100%"class="object-fit-contain text-center">
-              <strong class="text-warning">{{ post.title }}</strong>
+              <strong class="text-warning"><span class="text-secondary">Tittle: </span> {{ post.title }}</strong>
           </div>
             
               <p>{{ post.content|linebreaks }}</p>
 
                   <div class="container mt-5 text-center">
                       <h4 class="text-success">Rate post</h4>
-                      <button id="likeBtn" class="btn btn-outline-danger" >
+                      <button id="likeBtn" class="btn btn-outline-danger mb-2" >
                         <i id="heartIcon" class="bi bi-star"></i><span id="max"></span> Rate <span id="likeTotal">0</span>
                       </button>
 
                       <button
-                      class="btn btn-outline btn-secondary"
+                      class="btn btn-outline btn-secondary mb-2"
                       onclick="increaseCount()"
                       ondblclick="resetCounter()"
                       id = "counterBtn"
@@ -33,7 +33,7 @@
 
                       <button 
                       onclick="subscribe()" 
-                      class="my-js-btn btn btn-dark raduis-4 rounded-5"
+                      class="my-js-btn btn btn-dark raduis-4 rounded-5, mb-2"
                       >Subscribe</button> 
                 </div>
               <div class="d-flex justify-content-between">
